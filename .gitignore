@@ -1,0 +1,8 @@
+out/
+.serverless
+.idea
+node_modules/
+.DS_Store
+dist/
+yarn-error.log
+scratchpad.js

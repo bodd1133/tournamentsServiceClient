@@ -1,0 +1,51 @@
+{
+  "name": "@seneca/tournaments-service-client",
+  "version": "0.0.1",
+  "description": "Client to consume the functionality of the tournaments service",
+  "main": "dist/index.js",
+  "repository": "https://github.com/SenecaLabs/tournamentsServiceClient.git",
+  "author": "Seneca Labs",
+  "license": "UNLICENCED",
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "precommit": "lint-staged && yarn docs && git add docs/API.md",
+    "start:dynamo": ". ./scripts/service_dir.sh && ${SCRIPTS_DIR}/dynamo_start.sh",
+    "stop:dynamo": ". ./scripts/service_dir.sh && ${SCRIPTS_DIR}/dynamo_stop.sh",
+    "start:dependencies:local": "yarn start:dynamo && . ./scripts/service_dir.sh && ${SCRIPTS_DIR}/docker_dependencies_start.sh",
+    "start:dependencies:cloud": ". ./scripts/service_dir.sh && ${SCRIPTS_DIR}/deploy_dependencies.sh",
+    "stop:dependencies:local": "yarn stop:dynamo && . ./scripts/service_dir.sh && ${SCRIPTS_DIR}/docker_dependencies_stop.sh",
+    "stop:dependencies:cloud": ". ./scripts/service_dir.sh && ${SCRIPTS_DIR}/undeploy_dependencies.sh",
+    "permission:dependency:remove": ". ./scripts/service_dir.sh && ${SCRIPTS_DIR}/dettach_policy_from_lambda_role.js",
+    "test:local": "STAGE=dev IS_OFFLINE=true AWS_REGION=eu-west-1 USER_POOL_ID=acceptance-test jest --maxWorkers 1 --verbose",
+    "test:cloud": "AWS_REGION=eu-west-1 USER_POOL_ID=acceptance-test jest --maxWorkers 1 --verbose",
+    "build": "rm -rf ./out/* && babel src -d dist",
+    "docs": "documentation build src/** -f md -g -o docs/API.md"
+  },
+  "dependencies": {
+    "@seneca/client-library": "^1.0.12",
+    "uuidv4": "^2.0.0"
+  },
+  "devDependencies": {
+    "@seneca/tournaments-service-dev": "0.0.1",
+    "@seneca/service-framework": "^3.4.8",
+    "aws-sdk": "^2.270.1",
+    "babel-cli": "^6.26.0",
+    "babel-jest": "^23.2.0",
+    "babel-plugin-transform-builtin-extend": "^1.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "documentation": "^8.0.0",
+    "husky": "^0.14.3",
+    "jest": "^23.3.0",
+    "lint-staged": "^7.2.0",
+    "prettier": "^1.13.7",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
