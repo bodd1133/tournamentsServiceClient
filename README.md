@@ -1,0 +1,2 @@
+# tournamentService
+# tournamentsServiceClient
