@@ -40,7 +40,8 @@ describe('tournamentsServiceClient#fetchTournamentEnrolments', function() {
       await getServiceClientOptions(userId)
     );
     const returnedTournamentEnrolments = await subject.fetchTournamentEnrolments(
-      tournamentId
+      tournamentId,
+      limit
     );
     expect(returnedTournamentEnrolments.count).toEqual(0);
     expect(returnedTournamentEnrolments.items).toEqual(tournamentEnrolments);
@@ -60,7 +61,8 @@ describe('tournamentsServiceClient#fetchTournamentEnrolments', function() {
       await getServiceClientOptions(userId)
     );
     const returnedTournamentEnrolments = await subject.fetchTournamentEnrolments(
-      tournamentId
+      tournamentId,
+      limit
     );
     expect(returnedTournamentEnrolments.count).toEqual(100);
     returnedTournamentEnrolments.items.forEach(en => {

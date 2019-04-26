@@ -26,7 +26,7 @@ export default class TournamentsServiceClient extends Client {
    * @throws {RequestLimitExceeded} when the max number of retries has been hit
    * @returns {Array<Tournaments>} an array of tournaments
    */
-  async fetchAllTournaments(limit) {
+  async fetchAllTournaments(limit = 200) {
     let items = [];
     let lastKey = undefined;
     do {
@@ -36,8 +36,15 @@ export default class TournamentsServiceClient extends Client {
         lastKey
       });
       lastKey = page.lastKey;
-      items = items.concat(page.items);
-    } while (lastKey);
+      for (let i = 0; i < page.items.length; i++) {
+        if (items.length < limit) {
+          items.push(page.items[i]);
+        }
+        if (items.length === limit) {
+          break;
+        }
+      }
+    } while (lastKey && items.length < limit);
 
     return {
       items,
@@ -50,7 +57,7 @@ export default class TournamentsServiceClient extends Client {
    * @throws {RequestLimitExceeded} when the max number of retries has been hit
    * @returns {Array<Tournaments>} an array of tournaments
    */
-  async fetchMyTournaments(limit) {
+  async fetchMyTournaments(limit = 200) {
     let items = [];
     let lastKey = undefined;
     do {
@@ -60,8 +67,15 @@ export default class TournamentsServiceClient extends Client {
         lastKey
       });
       lastKey = page.lastKey;
-      items = items.concat(page.items);
-    } while (lastKey);
+      for (let i = 0; i < page.items.length; i++) {
+        if (items.length < limit) {
+          items.push(page.items[i]);
+        }
+        if (items.length === limit) {
+          break;
+        }
+      }
+    } while (lastKey && items.length < limit);
 
     return {
       items,
@@ -74,7 +88,7 @@ export default class TournamentsServiceClient extends Client {
    * @throws {RequestLimitExceeded} when the max number of retries has been hit
    * @returns {Array<TournamentEnrolments>} an array of tournament enrolments
    */
-  async fetchTournamentEnrolments(tournamentId, limit) {
+  async fetchTournamentEnrolments(tournamentId, limit = 200) {
     if (!tournamentId) {
       throw new MissingParamError('tournamentId');
     }
@@ -88,8 +102,15 @@ export default class TournamentsServiceClient extends Client {
         lastKey
       });
       lastKey = page.lastKey;
-      items = items.concat(page.items);
-    } while (lastKey);
+      for (let i = 0; i < page.items.length; i++) {
+        if (items.length < limit) {
+          items.push(page.items[i]);
+        }
+        if (items.length === limit) {
+          break;
+        }
+      }
+    } while (lastKey && items.length < limit);
 
     return {
       items,
@@ -100,8 +121,6 @@ export default class TournamentsServiceClient extends Client {
   async fetchPage(options) {
     const queryParamsParts = [];
 
-    let limit = 200;
-
     if (options && options.tournamentId) {
       queryParamsParts.push(
         `tournamentId=${encodeURIComponent(options.tournamentId)}`
@@ -109,10 +128,8 @@ export default class TournamentsServiceClient extends Client {
     }
 
     if (options && options.limit) {
-      limit = options.limit;
+      queryParamsParts.push(`limit=${options.limit}`);
     }
-
-    queryParamsParts.push(`limit=${limit}`);
 
     if (options && options.lastKey) {
       queryParamsParts.push(`lastKey=${encodeURIComponent(options.lastKey)}`);

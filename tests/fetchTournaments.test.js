@@ -20,7 +20,7 @@ describe('tournamentsServiceClient#fetchAllTournaments', function() {
       await successNoTournaments.mockFetchBuilder({ userId, catalogue, limit }),
       await getServiceClientOptions(userId)
     );
-    const returnedTournaments = await subject.fetchAllTournaments();
+    const returnedTournaments = await subject.fetchAllTournaments(limit);
     expect(returnedTournaments.count).toEqual(0);
     expect(returnedTournaments.items).toEqual(tournaments);
   });
@@ -37,7 +37,7 @@ describe('tournamentsServiceClient#fetchAllTournaments', function() {
       }),
       await getServiceClientOptions(userId)
     );
-    const returnedTournaments = await subject.fetchAllTournaments();
+    const returnedTournaments = await subject.fetchAllTournaments(limit);
     expect(returnedTournaments.count).toEqual(100);
     returnedTournaments.items.forEach(t => {
       expect(Object.keys(t)).toEqual(

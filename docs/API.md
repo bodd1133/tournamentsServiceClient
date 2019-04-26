@@ -45,7 +45,7 @@ Error for when user tries to enrol/unenrol in expired tournament
 
 ## TournamentsServiceClient
 
-[src/TournamentsServiceClient.js:19-193][20]
+[src/TournamentsServiceClient.js:19-210][20]
 
 **Extends Client**
 
@@ -70,13 +70,13 @@ TournamentsServiceClient
 
 ### fetchAllTournaments
 
-[src/TournamentsServiceClient.js:29-46][23]
+[src/TournamentsServiceClient.js:29-53][23]
 
 Fetches all active tournaments
 
 #### Parameters
 
--   `limit`  
+-   `limit`   (optional, default `200`)
 
 
 -   Throws **RequestLimitExceeded** when the max number of retries has been hit
@@ -85,13 +85,13 @@ Returns **[Array][24]&lt;Tournaments>** an array of tournaments
 
 ### fetchMyTournaments
 
-[src/TournamentsServiceClient.js:53-70][25]
+[src/TournamentsServiceClient.js:60-84][25]
 
 Fetches all my tournaments
 
 #### Parameters
 
--   `limit`  
+-   `limit`   (optional, default `200`)
 
 
 -   Throws **RequestLimitExceeded** when the max number of retries has been hit
@@ -100,14 +100,14 @@ Returns **[Array][24]&lt;Tournaments>** an array of tournaments
 
 ### fetchTournamentEnrolments
 
-[src/TournamentsServiceClient.js:77-98][26]
+[src/TournamentsServiceClient.js:91-119][26]
 
 Fetches all enrolments for a specific tournament
 
 #### Parameters
 
 -   `tournamentId`  
--   `limit`  
+-   `limit`   (optional, default `200`)
 
 
 -   Throws **RequestLimitExceeded** when the max number of retries has been hit
@@ -116,7 +116,7 @@ Returns **[Array][24]&lt;TournamentEnrolments>** an array of tournament enrolmen
 
 ### putTournamentEnrolment
 
-[src/TournamentsServiceClient.js:142-148][27]
+[src/TournamentsServiceClient.js:159-165][27]
 
 Enrols a user in a tournament
 
@@ -132,7 +132,7 @@ Enrols a user in a tournament
 
 ### deleteTournamentEnrolment
 
-[src/TournamentsServiceClient.js:158-164][28]
+[src/TournamentsServiceClient.js:175-181][28]
 
 Unenrols a user from a tournament
 
@@ -179,29 +179,29 @@ Returns **[Promise][29]&lt;[undefined][30]>**
 
 [16]: #parameters-7
 
-[17]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/errors/InvalidTournamentIdError.js#L8-L13 "Source code on GitHub"
+[17]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/errors/InvalidTournamentIdError.js#L8-L13 "Source code on GitHub"
 
 [18]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[19]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/errors/TournamentHasEndedError.js#L8-L14 "Source code on GitHub"
+[19]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/errors/TournamentHasEndedError.js#L8-L14 "Source code on GitHub"
 
-[20]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/TournamentsServiceClient.js#L19-L193 "Source code on GitHub"
+[20]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/TournamentsServiceClient.js#L19-L210 "Source code on GitHub"
 
 [21]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
 [22]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[23]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/TournamentsServiceClient.js#L29-L46 "Source code on GitHub"
+[23]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/TournamentsServiceClient.js#L29-L53 "Source code on GitHub"
 
 [24]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[25]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/TournamentsServiceClient.js#L53-L70 "Source code on GitHub"
+[25]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/TournamentsServiceClient.js#L60-L84 "Source code on GitHub"
 
-[26]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/TournamentsServiceClient.js#L77-L98 "Source code on GitHub"
+[26]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/TournamentsServiceClient.js#L91-L119 "Source code on GitHub"
 
-[27]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/TournamentsServiceClient.js#L142-L148 "Source code on GitHub"
+[27]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/TournamentsServiceClient.js#L159-L165 "Source code on GitHub"
 
-[28]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/10c5325fd8fda90409546c625315b95f6d23eca4/src/TournamentsServiceClient.js#L158-L164 "Source code on GitHub"
+[28]: https://git@github.com/:bodd1133/tournamentsServiceClient/blob/3ab298bab6c0e0b44eb4cef5dfe8cdcd226035bf/src/TournamentsServiceClient.js#L175-L181 "Source code on GitHub"
 
 [29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
