@@ -7,11 +7,15 @@ import TournamentHasEndedError from '../src/errors/TournamentHasEndedError';
 import tournamentsServiceClient from '../src/tournamentsServiceClient';
 import { getServiceClientOptions } from './testUtils';
 
+const catalogue = { getStoredObjects: () => [] };
+
 const {
   successValidTournament,
   failureInvalidTournamentId,
   failureTournamentHasEnded
-} = new MockInterface(tournamentsServiceInterface).endpoints.putTournamentEnrolment;
+} = new MockInterface(
+  tournamentsServiceInterface
+).endpoints.putTournamentEnrolment;
 
 describe('tournamentsServiceClient#putTournamentEnrolment', function() {
   it('throws error if tournamentId field not supplied', async function() {
@@ -28,7 +32,11 @@ describe('tournamentsServiceClient#putTournamentEnrolment', function() {
     const tournamentId = uuidv4();
 
     const subject = new tournamentsServiceClient(
-      await successValidTournament.mockFetchBuilder({ userId, tournamentId }),
+      await successValidTournament.mockFetchBuilder({
+        userId,
+        tournamentId,
+        catalogue
+      }),
       await getServiceClientOptions(userId)
     );
     await subject.putTournamentEnrolment(tournamentId);
@@ -40,7 +48,11 @@ describe('tournamentsServiceClient#putTournamentEnrolment', function() {
     const tournamentId = uuidv4();
 
     const subject = new tournamentsServiceClient(
-      await failureInvalidTournamentId.mockFetchBuilder({ userId, tournamentId }),
+      await failureInvalidTournamentId.mockFetchBuilder({
+        userId,
+        tournamentId,
+        catalogue
+      }),
       await getServiceClientOptions(userId)
     );
 
@@ -55,7 +67,11 @@ describe('tournamentsServiceClient#putTournamentEnrolment', function() {
     const tournamentId = uuidv4();
 
     const subject = new tournamentsServiceClient(
-      await failureTournamentHasEnded.mockFetchBuilder({ userId, tournamentId }),
+      await failureTournamentHasEnded.mockFetchBuilder({
+        userId,
+        tournamentId,
+        catalogue
+      }),
       await getServiceClientOptions(userId)
     );
 

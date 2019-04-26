@@ -7,37 +7,36 @@ import { getServiceClientOptions } from './testUtils';
 const catalogue = { getStoredObjects: () => [] };
 const limit = 200;
 
-const { successNoTournaments, successFetchAllTournaments } = new MockInterface(
+const { successNoTournaments, successFetchMyTournaments } = new MockInterface(
   tournamentsServiceInterface
-).endpoints.fetchAllTournaments;
+).endpoints.fetchMyTournaments;
 
-describe('tournamentsServiceClient#fetchAllTournaments', function() {
+describe('tournamentsServiceClient#fetchMyTournaments', function() {
   it('successNoTournaments', async function() {
     const { tournaments } = await successNoTournaments.buildTestData();
     const userId = uuidv4();
 
     const subject = new TournamentsServiceClient(
-      await successNoTournaments.mockFetchBuilder({ userId, catalogue, limit }),
+      await successNoTournaments.mockFetchBuilder({ userId, limit }),
       await getServiceClientOptions(userId)
     );
-    const returnedTournaments = await subject.fetchAllTournaments();
+    const returnedTournaments = await subject.fetchMyTournaments();
     expect(returnedTournaments.count).toEqual(0);
     expect(returnedTournaments.items).toEqual(tournaments);
   });
-  it('successFetchAllTournaments', async function() {
-    await successFetchAllTournaments.buildTestData();
-
+  it('successFetchMyTournaments', async function() {
+    await successFetchMyTournaments.buildTestData();
     const userId = uuidv4();
 
     const subject = new TournamentsServiceClient(
-      await successFetchAllTournaments.mockFetchBuilder({
+      await successFetchMyTournaments.mockFetchBuilder({
         userId,
         catalogue,
         limit
       }),
       await getServiceClientOptions(userId)
     );
-    const returnedTournaments = await subject.fetchAllTournaments();
+    const returnedTournaments = await subject.fetchMyTournaments();
     expect(returnedTournaments.count).toEqual(100);
     returnedTournaments.items.forEach(t => {
       expect(Object.keys(t)).toEqual(
@@ -48,7 +47,8 @@ describe('tournamentsServiceClient#fetchAllTournaments', function() {
           'courseId',
           'description',
           'prize',
-          'name'
+          'name',
+          'isActive'
         ])
       );
     });

@@ -17,55 +17,117 @@ import InvalidTournamentIdError from './errors/InvalidTournamentIdError';
  * @throws {UrlConstructionError} when either options.protocol or options.host is missing
  */
 export default class TournamentsServiceClient extends Client {
-  constructor(options) {
-    super(options);
+  constructor(fetch, options) {
+    super(fetch, options);
   }
 
   /**
-   * Fetches all active tournaments 
+   * Fetches all active tournaments
    * @throws {RequestLimitExceeded} when the max number of retries has been hit
    * @returns {Array<Tournaments>} an array of tournaments
    */
-  async fetchTournaments() {
-    const url = `${this.url}/api/tournaments`
-    const response = await this.requestMaker.makeRequest(
-      url,
-      {
-        method:'GET'
-      },
-      [ 200 ]
-    );
-    return response.json;
+  async fetchAllTournaments(limit) {
+    let items = [];
+    let lastKey = undefined;
+    do {
+      const page = await this.fetchPage({
+        url: `${this.url}/api/tournaments`,
+        limit,
+        lastKey
+      });
+      lastKey = page.lastKey;
+      items = items.concat(page.items);
+    } while (lastKey);
+
+    return {
+      items,
+      count: items.length
+    };
   }
 
-   /**
-   * Fetches enrolments for a specific tournament 
+  /**
+   * Fetches all my tournaments
+   * @throws {RequestLimitExceeded} when the max number of retries has been hit
+   * @returns {Array<Tournaments>} an array of tournaments
+   */
+  async fetchMyTournaments(limit) {
+    let items = [];
+    let lastKey = undefined;
+    do {
+      const page = await this.fetchPage({
+        url: `${this.url}/api/enrolments/me/tournaments`,
+        limit,
+        lastKey
+      });
+      lastKey = page.lastKey;
+      items = items.concat(page.items);
+    } while (lastKey);
+
+    return {
+      items,
+      count: items.length
+    };
+  }
+
+  /**
+   * Fetches all enrolments for a specific tournament
    * @throws {RequestLimitExceeded} when the max number of retries has been hit
    * @returns {Array<TournamentEnrolments>} an array of tournament enrolments
    */
-  async fetchTournamentEnrolments(tournamentId) {
+  async fetchTournamentEnrolments(tournamentId, limit) {
     if (!tournamentId) {
       throw new MissingParamError('tournamentId');
     }
+    let items = [];
+    let lastKey = undefined;
+    do {
+      const page = await this.fetchPage({
+        tournamentId,
+        url: `${this.url}/api/enrolments/tournaments`,
+        limit,
+        lastKey
+      });
+      lastKey = page.lastKey;
+      items = items.concat(page.items);
+    } while (lastKey);
 
-    const url = `${this.url}/api/enrolments/tournaments/${tournamentId}`
-    const response = await this.requestMaker.makeRequest(
-      url,
-      {
-        method:'GET'
-      },
-      [ 200 ]
-    );
-    return response.json;
+    return {
+      items,
+      count: items.length
+    };
   }
 
-  /**
-   * Fetches all my tournaments 
-   * @throws {RequestLimitExceeded} when the max number of retries has been hit
-   * @returns {Array<Tournaments>} an array of tournaments
-   */
-  async fetchMyTournaments() {
-    return await this._makeTournamentRequest('GET');
+  async fetchPage(options) {
+    const queryParamsParts = [];
+
+    let limit = 200;
+
+    if (options && options.tournamentId) {
+      queryParamsParts.push(
+        `tournamentId=${encodeURIComponent(options.tournamentId)}`
+      );
+    }
+
+    if (options && options.limit) {
+      limit = options.limit;
+    }
+
+    queryParamsParts.push(`limit=${limit}`);
+
+    if (options && options.lastKey) {
+      queryParamsParts.push(`lastKey=${encodeURIComponent(options.lastKey)}`);
+    }
+
+    const queryParams = queryParamsParts.join('&');
+    let url = options.url;
+    url = queryParams.length > 0 ? `${url}?${queryParams}` : url;
+    const response = await this.requestMaker.makeRequest(
+      url,
+      { method: 'GET' },
+      [200]
+    );
+
+    return response.json;
   }
 
   /**
@@ -75,7 +137,7 @@ export default class TournamentsServiceClient extends Client {
    * @throws {RequestLimitExceeded} when the max number of retries has been hit
    * @throws {AssignmentDoesNotExistError} when the assignment cannot be found
    * @throws {AssignmentBodyNotValidError} when the assignment body is not valid
-   * @returns 
+   * @returns
    */
   async putTournamentEnrolment(tournamentId) {
     if (!tournamentId) {
@@ -101,19 +163,11 @@ export default class TournamentsServiceClient extends Client {
     return await this._makeTournamentRequest('DELETE', tournamentId);
   }
 
-
-  async _makeTournamentRequest(
-    method,
-    tournamentId
-  ) {
-    let url = `${this.url}/api/enrollments/me/tournaments`;
+  async _makeTournamentRequest(method, tournamentId) {
+    let url = `${this.url}/api/enrolments/me/tournaments`;
 
     if (tournamentId) {
       url += `/${tournamentId}`;
-    }
-
-    if (queryParams) {
-      url += `?${this.generateQueryParamString(queryParams)}`;
     }
 
     const expectedResponses = [200, 204, 400, 422];
@@ -121,8 +175,7 @@ export default class TournamentsServiceClient extends Client {
     const response = await this.requestMaker.makeRequest(
       url,
       {
-        method,
-        body: body ? JSON.stringify(body) : undefined
+        method
       },
       expectedResponses
     );
@@ -132,19 +185,9 @@ export default class TournamentsServiceClient extends Client {
     }
 
     if (response.status === 400) {
-      throw new TournamentHasEndedError();
+      throw new TournamentHasEndedError(tournamentId);
     }
 
     return response.json;
-  }
-
-  generateQueryParamString(queryParams) {
-    if (queryParams && Object.keys(queryParams).length > 0) {
-      return Object.keys(queryParams)
-        .map(param => `${param}=${encodeURIComponent(queryParams[param])}`)
-        .join('&');
-    }
-
-    return '';
   }
 }

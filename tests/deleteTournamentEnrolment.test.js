@@ -4,18 +4,22 @@ import { MissingParamError } from '@seneca/client-library';
 import uuidv4 from 'uuid/v4';
 import InvalidTournamentIdError from '../src/errors/InvalidTournamentIdError';
 import TournamentHasEndedError from '../src/errors/TournamentHasEndedError';
-import tournamentsServiceClient from '../src/tournamentsServiceClient';
+import TournamentsServiceClient from '../src/TournamentsServiceClient';
 import { getServiceClientOptions } from './testUtils';
+
+const catalogue = { getStoredObjects: () => [] };
 
 const {
   successValidTournament,
   failureInvalidTournamentId,
   failureTournamentHasEnded
-} = new MockInterface(tournamentsServiceInterface).endpoints.deleteTournamentEnrolment;
+} = new MockInterface(
+  tournamentsServiceInterface
+).endpoints.deleteTournamentEnrolment;
 
 describe('tournamentsServiceClient#deleteTournamentEnrolment', function() {
   it('throws error if tournamentId field not supplied', async function() {
-    const client = new tournamentsServiceClient(function fetch() {},
+    const client = new TournamentsServiceClient(function fetch() {},
     await getServiceClientOptions());
     await expect(client.deleteTournamentEnrolment()).rejects.toThrow(
       new MissingParamError('tournamentId')
@@ -27,8 +31,12 @@ describe('tournamentsServiceClient#deleteTournamentEnrolment', function() {
     const userId = uuidv4();
     const tournamentId = uuidv4();
 
-    const subject = new tournamentsServiceClient(
-      await successValidTournament.mockFetchBuilder({ userId, tournamentId }),
+    const subject = new TournamentsServiceClient(
+      await successValidTournament.mockFetchBuilder({
+        userId,
+        tournamentId,
+        catalogue
+      }),
       await getServiceClientOptions(userId)
     );
     await subject.deleteTournamentEnrolment(tournamentId);
@@ -39,8 +47,12 @@ describe('tournamentsServiceClient#deleteTournamentEnrolment', function() {
     const userId = uuidv4();
     const tournamentId = uuidv4();
 
-    const subject = new tournamentsServiceClient(
-      await failureInvalidTournamentId.mockFetchBuilder({ userId, tournamentId }),
+    const subject = new TournamentsServiceClient(
+      await failureInvalidTournamentId.mockFetchBuilder({
+        userId,
+        tournamentId,
+        catalogue
+      }),
       await getServiceClientOptions(userId)
     );
 
@@ -54,8 +66,12 @@ describe('tournamentsServiceClient#deleteTournamentEnrolment', function() {
     const userId = uuidv4();
     const tournamentId = uuidv4();
 
-    const subject = new tournamentsServiceClient(
-      await failureTournamentHasEnded.mockFetchBuilder({ userId, tournamentId }),
+    const subject = new TournamentsServiceClient(
+      await failureTournamentHasEnded.mockFetchBuilder({
+        userId,
+        tournamentId,
+        catalogue
+      }),
       await getServiceClientOptions(userId)
     );
 
